@@ -10,7 +10,10 @@ import requests
 from openai import OpenAI
 
 # Initialize OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(
+    base_url=os.environ["API_BASE_URL"],
+    api_key=os.environ["API_KEY"]
+)
 
 # Environment endpoint
 ENV_URL = os.environ.get("ENV_URL", "http://localhost:7860")
