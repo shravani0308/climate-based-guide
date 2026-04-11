@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "climateguard"
+version = "1.0.0"
+description = "Multi-Crisis Climate Response Coordination Environment"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core>=0.2.2",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.0.0",
+    "numpy>=1.24.0",
+    "openai>=1.0.0",
+    "requests>=2.31.0",
+    "huggingface-hub>=0.22.0",
+]
