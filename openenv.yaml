@@ -1,24 +1,42 @@
 spec_version: 1
-name: climatecrisis
-display_name: "ClimateGuard AI — Multi-Crisis Climate Response System"
+name: climateguard
+display_name: "ClimateGuard AI - Multi-Crisis Climate Response"
 description: >
-  An advanced RL environment for training AI agents to coordinate
-  global climate crisis response across wildfires, floods, droughts,
-  and extreme weather events. Calibrated on 15+ years of NOAA climate
-  data, IPCC models, and WHO disaster response protocols.
-type: environment
+  A scientifically calibrated RL environment for training AI agents
+  to coordinate multi-agency climate crisis response within critical
+  time windows. Based on real disaster response protocols and data.
+
+type: http
 runtime:
-  image: climatecrisis:latest
+  image: climateguard:latest
   port: 7860
 app:
   module: server.app
   variable: app
-tags:
-  - climate-change
-  - disaster-response
-  - multi-agent
-  - reinforcement-learning
-  - real-world
-  - openenv
-version: 1.0.0
-author: "Meta PyTorch Hackathon 2026"
+
+tasks:
+  - id: single_crisis
+    name: "Single Crisis Response"
+    difficulty: easy
+    max_steps: 10
+    reward_range: [0.0, 1.0]
+
+  - id: multi_crisis
+    name: "Multi-Crisis Coordination"
+    difficulty: medium
+    max_steps: 15
+    reward_range: [0.0, 1.0]
+
+  - id: cascade_crisis
+    name: "Cascade Crisis Management"
+    difficulty: hard
+    max_steps: 20
+    reward_range: [0.0, 1.0]
+
+metadata:
+  research_basis:
+    - "Real climate disaster response protocols"
+    - "Multi-agency coordination frameworks"
+    - "Crisis management best practices"
+  domain: climate_ai
+  tags: ["climate", "disaster", "coordination", "multi-agent"]

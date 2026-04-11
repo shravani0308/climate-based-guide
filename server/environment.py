@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models import (
     ClimateAction, ClimateObservation, ClimateEpisodeState,
-    RegionData, GlobalResources
+    RegionState, ResourceState
 )
 
 try:
@@ -88,18 +88,15 @@ class ClimateGuardEnvironment(Environment):
         self._resources = self._generate_resources(task_config)
         
         return ClimateObservation(
-            done=False,
-            reward=None,
-            regions=self._regions,
-            resources=self._resources,
             day=0,
             total_casualties=0,
             total_evacuated=0,
-            total_population_at_risk=sum(r.population for r in self._regions),
-            global_temperature_anomaly=1.5,
-            co2_ppm=420.0,
-            outcome_summary=f"Climate crisis initiated. {len(self._regions)} regions affected.",
-            task_description=task_config["description"]
+            regions=self._regions,
+            resources=self._resources,
+            weather_forecast="Clear skies expected",
+            done=False,
+            reward=0.0,
+            info={"task_description": task_config["description"]}
         )
     
     def step(self, action: ClimateAction, timeout_s=None, **kwargs):
@@ -122,18 +119,15 @@ class ClimateGuardEnvironment(Environment):
         done = self._day >= task_config["max_days"]
         
         return ClimateObservation(
-            done=done,
-            reward=reward,
-            regions=self._regions,
-            resources=self._resources,
             day=self._day,
             total_casualties=self._total_casualties,
             total_evacuated=self._total_evacuated,
-            total_population_at_risk=sum(r.population - r.evacuated for r in self._regions),
-            global_temperature_anomaly=1.5 + self._day * 0.02,
-            co2_ppm=420.0 + self._day * 0.5,
-            outcome_summary=outcome["summary"],
-            task_description=task_config["description"]
+            regions=self._regions,
+            resources=self._resources,
+            weather_forecast="Conditions deteriorating",
+            done=done,
+            reward=reward,
+            info={"outcome_summary": outcome["summary"]}
         )
     
     @property
@@ -144,7 +138,7 @@ class ClimateGuardEnvironment(Environment):
             task_id=self._task_id
         )
     
-    def _generate_regions(self, task_config: Dict) -> List[RegionData]:
+    def _generate_regions(self, task_config: Dict) -> List[RegionState]:
         """Generate regions with crises"""
         regions = []
         num_regions = task_config["num_regions"]
@@ -155,49 +149,36 @@ class ClimateGuardEnvironment(Environment):
             severity = random.uniform(0.4, 0.9)
             population = random.randint(50000, 500000)
             
-            region = RegionData(
+            region = RegionState(
                 region_id=i,
                 region_name=self.REGION_NAMES[i % len(self.REGION_NAMES)],
                 crisis_type=crisis_type,
                 severity=round(severity, 3),
                 population=population,
-                evacuated=0,
                 casualties=0,
-                infrastructure_damage=round(severity * 0.8, 3),
-                water_supply=round(max(0.0, 1.0 - severity * 0.7), 2),
+                evacuated=0,
                 power_grid=round(max(0.0, 1.0 - severity * 0.6), 2),
-                hospital_capacity=round(max(0.1, 1.0 - severity * 0.5), 2),
-                food_supply_days=round(max(1.0, 30.0 * (1.0 - severity * 0.4)), 1),
-                temperature_celsius=round(random.uniform(25, 45), 1),
-                air_quality_index=int(50 + severity * 400),
-                wind_speed_kmh=round(random.uniform(10, 80), 1),
-                precipitation_mm=round(random.uniform(0, 200), 1),
-                fire_spread_risk=round(random.uniform(0.3, 0.9), 2),
-                flood_risk=round(random.uniform(0.2, 0.8), 2),
-                neighboring_regions=[],
-                climate_trend="WORSENING" if severity > 0.7 else "STABLE"
+                water_supply=round(max(0.0, 1.0 - severity * 0.7), 2),
+                road_access=round(max(0.0, 1.0 - severity * 0.5), 2),
+                communication=round(max(0.0, 1.0 - severity * 0.4), 2)
             )
             regions.append(region)
         
         return regions
     
-    def _generate_resources(self, task_config: Dict) -> GlobalResources:
+    def _generate_resources(self, task_config: Dict) -> ResourceState:
         """Generate resources"""
         num_regions = task_config["num_regions"]
         mult = {"EASY": 1.5, "MEDIUM": 1.0, "HARD": 0.7}.get(task_config["difficulty"], 1.0)
         
-        return GlobalResources(
+        return ResourceState(
+            budget_millions=round(num_regions * 50 * mult, 1),
             firefighting_units=int(num_regions * 3 * mult),
-            flood_rescue_boats=int(num_regions * 2 * mult),
             medical_teams=int(num_regions * 2 * mult),
             evacuation_buses=int(num_regions * 4 * mult),
+            engineering_crews=int(num_regions * 2 * mult),
             helicopters=int(max(2, num_regions * 0.5 * mult)),
-            water_tankers=int(num_regions * 2 * mult),
-            food_supplies_tons=round(num_regions * 100 * mult, 1),
-            emergency_shelters=int(num_regions * 3 * mult),
-            power_generators=int(num_regions * 2 * mult),
-            communication_satellites=int(max(1, num_regions * 0.3 * mult)),
-            budget_millions=round(num_regions * 50 * mult, 1)
+            satellites=int(max(1, num_regions * 0.3 * mult))
         )
     
     def _execute_actions(self, action: ClimateAction) -> Dict:
