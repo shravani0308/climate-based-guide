@@ -235,7 +235,8 @@ class ClimateGuardEnvironment(Environment):
             0.30 * lives_score +
             0.20 * evacuation_score
         )
-        return float(np.clip(reward, 0.0, 1.0))
+        # CRITICAL: Ensure score is STRICTLY between 0 and 1 (not 0.0 or 1.0)
+        return float(np.clip(reward, 0.001, 0.999))
 
     def _grade_multi_crisis(self, action: ClimateAction, outcome: Dict) -> float:
         """
@@ -276,7 +277,8 @@ class ClimateGuardEnvironment(Environment):
             0.20 * prevention_score +
             0.15 * efficiency
         )
-        return float(np.clip(reward, 0.0, 1.0))
+        # CRITICAL: Ensure score is STRICTLY between 0 and 1 (not 0.0 or 1.0)
+        return float(np.clip(reward, 0.001, 0.999))
 
     def _grade_cascade_crisis(self, action: ClimateAction, outcome: Dict) -> float:
         """
@@ -315,7 +317,8 @@ class ClimateGuardEnvironment(Environment):
             0.25 * adaptation_score +
             0.15 * survival_score
         )
-        return float(np.clip(reward, 0.0, 1.0))
+        # CRITICAL: Ensure score is STRICTLY between 0 and 1 (not 0.0 or 1.0)
+        return float(np.clip(reward, 0.001, 0.999))
 
     # ── Private Helpers ──────────────────────────────────────────────────────
 
