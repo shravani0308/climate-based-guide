@@ -1,9 +1,5 @@
-[build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
-
 [project]
-name = "climateguard"
+name = "climateguard-ai"
 version = "1.0.0"
 description = "Multi-Crisis Climate Response Coordination Environment"
 readme = "README.md"
@@ -14,7 +10,19 @@ dependencies = [
     "uvicorn>=0.24.0",
     "pydantic>=2.0.0",
     "numpy>=1.24.0",
-    "openai>=1.0.0",
     "requests>=2.31.0",
+    "openai>=1.0.0",
+    "python-multipart>=0.0.6",
     "huggingface-hub>=0.22.0",
+    "httpx>=0.24.0",
 ]
+
+[project.scripts]
+server = "server.app:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_backend"
+
+[tool.setuptools]
+packages = ["server"]

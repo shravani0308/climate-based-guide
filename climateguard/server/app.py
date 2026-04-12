@@ -1,6 +1,5 @@
 """
 FastAPI app for ClimateGuard AI
-FIX: create_fastapi_app takes only the Environment class (newer openenv-core style)
 """
 
 import os
@@ -18,3 +17,13 @@ except ImportError:
     from server.environment import ClimateGuardEnvironment
 
 app = create_fastapi_app(ClimateGuardEnvironment)
+
+
+def main():
+    """Entry point for [project.scripts] — runs the uvicorn server."""
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
+
+
+if __name__ == "__main__":
+    main()

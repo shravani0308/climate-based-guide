@@ -19,7 +19,7 @@ from typing import List, Optional
 from openai import OpenAI
 
 # ── FIX 1 & 2: Correct variable names + os.getenv (no crash) ────────────────
-HF_TOKEN     = os.getenv("HF_TOKEN")
+API_KEY      = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME   = os.getenv("MODEL_NAME",   "Qwen/Qwen2.5-72B-Instruct")
 ENV_URL      = os.getenv("ENV_URL",      "http://localhost:7860")
@@ -46,7 +46,7 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> No
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     print(
         f"[END] success={str(success).lower()} "
-        f"steps={steps} score={score:.2f} rewards={rewards_str}",  # FIX 6: .2f
+        f"steps={steps} score={score:.3f} rewards={rewards_str}",  # FIX 6: .2f
         flush=True,
     )
 
